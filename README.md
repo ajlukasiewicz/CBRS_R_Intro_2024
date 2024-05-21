@@ -1,6 +1,6 @@
 ## Welcome to Intro to R for Biologists
 
-Here, you will find all the scripts, datasets, and presentation slides for the 2024 CBRS Summer Course: "Intro to R for Biologists"
+In this repository you will find all the scripts, datasets, and presentation slides for the 2024 CBRS Summer Course: "Intro to R for Biologists"
 
 ## Important Course Information
 
