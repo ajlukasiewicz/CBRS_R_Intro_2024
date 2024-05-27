@@ -1,0 +1,198 @@
+## Developed by Rachael Cox
+
+```{r global_options, include=FALSE}
+
+library(knitr)
+opts_chunk$set(fig.align="center", fig.height=3, fig.width=4)
+library(tidyverse) # ggplot2 library is contained within the tidyverse
+theme_set(theme_bw(base_size = 12)) # set the default plot theme for the ggplot2
+library(ggthemes) # enables colorblind-friendly color palettes
+
+```
+## Day 2: Data visualization
+### In-class worksheet
+
+**May 29th, 2024**
+
+## 1. Plotting x-y relationships
+
+### 1.1 Correlations
+
+We will work with the `iris` data set available in R. This data set gives the measurements in centimeters of the variables sepal length, sepal width, petal length and petal width for 50 flowers from each of 3 species of iris. The species are *Iris setosa*, *Iris versicolor*, and *Iris virginica*:
+
+```{r section 1.1}
+# view the first several rows of the iris data set
+head(iris)
+```
+
+1. Using ggplot, make a scatter plot of petal length vs. sepal length for the three species; the function you need for this is `geom_point()` and you will need to specify `color = Species` inside of `aes()`.
+
+```{r section 1.1 scatter plot}
+# your R code here
+```
+
+2. Do the same plot but facet by `Species` using `facet_wrap()`.
+
+```{r section 1.1 scatter plot faceted} 
+# your R code here
+```
+
+### 1.2 Time series
+
+The `omp` data set contains a subset of DNA microarray data measuring the differential expression of *E. coli* outer membrane proteins (omp) in nutrient-limited chemostatic cultures. In this particular experiment, the media is glucose-limited. The `gene` column denotes 8 genes that code for outer membrane proteins, `time_min` denotes the time point sampled in minutes, and `au` denotes the change in gene expression detected by the microarray chip (arbitrary units of fluorescence intensity).
+
+```{r}
+# import the `omp` data set
+omp <- read_csv("ecoli_omp_expression.csv")
+head(omp)
+```
+
+1. Plot the expression of each gene over time using `geom_line()`, coloring each line by gene. Notice anything off about this plot?
+
+```{r section 1.2 plot expression}
+# your R code here
+```
+
+2. Make the same plot but make the size of the lines thicker by specifying the `size` argument inside of `geom_line()`. How does R respond to that request?
+
+3. Use `scale_color_colorblind()` to convert the legend colors to a colorblind-friendly palette. 
+
+4. Use `xlab()` and `ylab` to give the figure pretty labels.
+
+```{r section 1.2 make plot nicer}
+# your R code here
+```
+
+## 2. Plotting amounts
+
+### 2.1 Bar plots
+
+The `bacteria` data set contains data from tests of the presence of the bacterium *H. influenzae* in children with otitis media in the Northern Territory of Australia. We are interested in two columns of this data set: `presence` reports the presence (y) or absence (n) of the bacterium, `treatment` reports the treatment, which was placebo, drug, or drug+ (drug plus high adherence).
+
+```{r section 2 import data}
+# download the `bacteria` data set
+bacteria <- read_csv("bacteria.csv")
+head(bacteria)
+```
+
+1. Using `geom_bar()`, make a bar plot with the `treatment` column on the x-axis, assigning the `presence` column to the `fill` argument to visualize the number of patients with and without bacteria for each type of treatment.
+
+```{r section 2 bar plot}
+# your R code here
+```
+
+Notice that, by default, `geom_bar()` stacks the counts for each class of `presence` on top of each other. Now:
+
+2. Modify the plot so that bars indicating the patients with or without the bacterium are shown side-by-side. Hint: This requires the argument `position='dodge'` in `geom_bar()`.
+
+3. Use `scale_fill_brewer()` to change the plot colors. 
+
+```{r section 2 geom_bar refined}
+# your R code here
+```
+
+4. Modify the plot so that bars represent the relative number of cases with or without the bacterium. What is the appropriate `position` option in `geom_bar()` to achieve this effect? Use `?geom_bar` to find out.
+
+5. Apply an alternative color palette for `scale_fill_brewer()` to use by specifying the `type` and `palette` arguments (see `?scale_fill_brewer` for details).
+
+```{r section 2 relative cases}
+# your R code here
+```
+
+### 2.2 Heat maps
+
+The `dandelion` data set contains RNA-seq reads for a subset of genes differentially expressed in response to five conditions. 
+
+```{r section 2.2 import dandelion}
+# download the dandelion differential expression data set
+dandelion <- read_csv("dandelion_diffexp_tidy.csv")
+head(dandelion)
+```
+
+1. Plot a heat map using `geom_tile` where each condition is on the x-axis and each gene (either `transcript_dandelion` or `loci_arabidopsis`) is on the y-axis. 
+
+2. Fill the color of the heat map using the `log2_foldchange` column. Use `scale_fill_distiller()` to specify a continuous **diverging** color palette.
+
+*(Note that I have told R Markdown to make a larger figure, by starting the code block with* `{r fig.height=6, fig.width=10}` *instead of* `{r}`*, because the default figure size is too narrow to show the resulting axes and map.)*
+
+```{r fig.height=3.5, fig.width=7}
+# your R code here
+```
+
+3. Make the same plot again, but rotate the text on the x-axis so they aren't mashing into each other.
+
+4. Apply a different color palette this time. You can use a different palette within
+`scale_fill_distiller()` (see `?scale_fill_distiller`) or you can use a different continuous color function, such as `scale_fill_viridis_c()` or `scale_fill_gradient()`.
+
+```{r fig.height=4, fig.width=7}
+# your R code here
+```
+
+## 3. Plotting distributions
+
+### 3.1 Boxplots, violin plots
+
+1. Using the `biopsy` data set, make side-by-side boxplots of `clump_thickness` for each `outcome`. The geom you need to use is `geom_boxplot()`.
+
+```{r}
+# download the biopsy data set
+biopsy <- read_csv("biopsy.csv")
+head(biopsy)
+```
+
+```{r}
+# your R code here
+```
+
+2. Make the same plot again, instead using `geom_violin()`. How are the violin plots different from the boxplots?
+
+```{r}
+# your R code here
+```
+
+3. Add a layer to your code that creates side-by-side plots of `clump_thickness` distribution for each value of `mitoses` using the `facet_wrap()` function.
+
+4. Try this with and without specifying the `ncol = 3` argument inside of the `facet_wrap()` function.
+
+```{r}
+# your R code here
+```
+
+### 3.2 Histograms, density plots
+
+1. Make a histogram plot of sepal lengths in the `iris` data set, using the default histogram settings. Use `geom_histogram()`.
+
+2. Make two more such plots, with different bin widths. You can change the bin width by specifying the argument `binwidth =` or `bins = `. See `?geom_histogram` for more information.
+
+```{r }
+# your R code here
+```
+
+3. Now use `geom_density()` and fill the area under the curves by species identity.
+
+```{r}
+# your R code here
+```
+
+4. Make the areas under the curve partially transparent using the `alpha` argument inside of `geom_density()`, so the overlap of the various distributions becomes clearly visible.
+
+```{r}
+# your R code here
+```
+
+## 4. Layering geoms
+
+**Bonus challenge:** For the `iris` data set, make a plot of the 2d distribution of petal length vs. sepal length, by making an x-y plot that shows the individual data points as well as contour lines indicating the density of points in a given spatial region.
+
+```{r}
+# your R code here
+```
+
+Now instead of contour lines, add a fitted straight black line (not a curve, and no confidence band!) to each group of points. You'll need to check `?geom_smooth` to see which arguments you'll need to specify.
+
+```{r}
+# your R code here
+```
+
+In this last example, because we are manually overriding the color of the lines, we need to set the group aesthetic to tell ggplot2 to draw a separate line for each species.
+
