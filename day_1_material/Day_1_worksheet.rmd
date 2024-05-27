@@ -1,0 +1,120 @@
+## Developed by Rachael Cox 
+
+```{r global_options, include=FALSE}
+library(knitr)
+library(tidyverse)
+opts_chunk$set(fig.align="center", fig.height=4, fig.width=4)
+```
+## Day 1: Introduction to R
+### In-class worksheet
+
+**May 28th, 2024**
+
+Computational analyses require methods and notes to be recorded the same way you would for wet lab experiments. An excellent way to do this is via R Markdown documents. R Markdown documents are documents that combine text, R code, and R code output, and figures. They are a great way to produce self-contained and documented statistical analyses.
+
+In this first worksheet, you will learn how to do some basic markdown editing in addition to the basic use of variables and functions in R. After you have made a change to the document, press "Knit HTML" in R Studio and see what kind of a result you get. **Note:** You may have to disable pop-ups to get this to work.
+
+---------------------------------------------
+
+## Section 1. Basic Markdown
+
+Try out basic R Markdown features, as described [here.](http://rmarkdown.rstudio.com/authoring_basics.html) 
+
+1. Write some text that is bold, and some that is in italics. 
+2. Make a numbered list and a bulleted list.
+3. Make a nested list. 
+4. Try the block-quote feature.
+
+--Try your Markdown syntax here--
+
+## Section 2. Embedding R code
+
+R code embedded in R chunks will be executed and the output will be shown.
+```{r section 2 variables}
+# R code is embedded into this chunk
+x <- 5
+y <- 7
+z <- x * y
+z
+```
+
+Play around with some basic R code, trying the following:
+
+1. Assign integers to variables (demonstrated in the above code block).
+2. Assign some strings to variables.
+3. Make a vector of strings containing your top 5 favorite foods.
+4. Make a vector containing 5 random numbers.
+5. Combine the two vectors you created in the previous step into one data frame.
+6. Call the first column of the data frame that you create.
+
+```{r section 2 assignments}
+#your code here
+```
+
+## Section 3. Built-in functions and data sets
+
+A function is statement internally (i.e., "under the hood") coded to perform a specific task. For instance, the `head()` function displays the first several rows of a data frame or values in a vector.
+
+R comes with many built-in functions and data sets. Type `data()` in the console to look at a list of all available data sets. Type `?iris` in the console for more information about this specific data set. You can take a glance at the `iris` data set using the `head()` function. Run the code chunk below to test this. 
+
+```{r section 3 functions}
+# preview the first few rows a data frame
+```
+
+You can also use the `summary()` function to see the summary statistics of a data set at a glance. Try this now with the `iris` data set.
+```{r section 3 summary}
+# your R code here
+```
+
+You can see the column names of `iris` from the code output above. Calculate the mean of the `Petal.Length` column using the `mean()` function. Calculate the range of the `Petal.Width` column using the `range()` function. **Hint:** call the columns the same way you did in Part 2 of the worksheet.
+
+```{r section 3 exploratory statistics}
+# your R code here
+```
+
+## Section 4. Reading, writing and locating files
+
+There are several ways to upload data into your R environment. We covered one way in Part 1 of the worksheet: manual entry. However, this is clearly not feasible for big data sets--more often, we want to read in a file containing our data. Also, we tend to modify data frames and save them to a new file. 
+
+Try the following:
+
+1. From the Day_1 folder upload 'mushrooms.csv' to the RStudio server. Use the "Upload" button in the panel on the right. 
+2. Use the `read_csv()` function to read the file, and save it as a data frame called `mushrooms`.
+
+__Important: The file name must be given to the function as a string.__
+
+3. Use the `head()` function to preview the **first 10 rows** of the new data frame. Specify the integer as the second argument of the function.
+4. Save the output of the `head()` function to a new data frame called `mushrooms_tiny`.
+5. Use the `write_csv` function to write the data frame `mushrooms_tiny` to a new `.csv` file. 
+
+**Note:** If you are coding on a local installation of R, you will have to specify a path to the location of the file or move the file to the working directory. Local installations of R do now have an "Upload" function. These concepts are covered at the end of this section.
+
+```{r section 4 reading and writing data}
+# your R code here
+```
+
+For this class, we are using a computer server where everyone has a preset working directory associated with your unique student ID number. Type `getwd()` to see the file path to your working directory. On a local installation, the output of this function might look something like `C:/Users/alex/Documents/`.
+
+```{r section 4 get working directory}
+# your R code here
+```
+
+This is the directory R will default to for reading and writing files. Ideally, for real life projects, we keep all the information we need organized into folders (aka sub-directories). More often than not, we have to tell R which sub-directory we want to read a file from or write a file to. Perform the following steps to familiarize yourself with file paths and R's perception of where files are:
+
+1. Use the "New Folder" option in the window on the bottom right to create a new folder called "day1_data".
+2. Select `mushrooms_tiny.csv` by checking the box.
+3. Go to "More" > "Move..." and select the new "day1_data" folder.
+4. Run `list.files()` to see all the files in the current working directory.
+5. Run `list.files("day1_data")` to see the files in the new sub-directory.
+6. Run #5 again, but this time specify that `full.names = TRUE` as the second argument in the function.
+
+
+```{r section 4 mushroom import}
+#perform import steps above
+```
+
+Clear your global environment (the broom symbol in the top right window). Read the file in the sub-directory "day1_data" using `read_csv`. The function will need the full path given by the output from the code chunk above.
+
+```{r section 4 read in data}
+# your R code here
+```
