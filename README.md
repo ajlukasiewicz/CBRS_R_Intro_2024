@@ -18,7 +18,7 @@ I will discuss local installation and setup of R and RStudio during class time, 
 
 * https://gsafcomp02.ccbb.utexas.edu/
 
-I will send out the login information prior to class
+I will share login information on our first day of class
 
 ## Installing R locally 
 
