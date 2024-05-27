@@ -6,7 +6,7 @@ In this repository you will find all the scripts, datasets, and presentation sli
 
 **Location:** [FNT 1.104](https://utdirect.utexas.edu/apps/campus/buildings/nlogon/maps/UTM/fnt/)
 
-**Time & Dates:** 1:30 - 4:30 PM, May 31st - June 3rd
+**Time & Dates:** 1:30 - 4:30 PM, May 28th - May 31st
 
 ## Course RStudio Servers
 
