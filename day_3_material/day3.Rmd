@@ -1,0 +1,164 @@
+## Developed by Rachael Cox
+
+```{r global_options, include=FALSE}
+
+library(knitr)
+opts_chunk$set(fig.align="center", fig.height=3, fig.width=4)
+library(ggthemes) # enables colorblind-friendly color palettes
+library(tidyverse)
+theme_set(theme_bw(base_size = 12)) # set the default plot theme for the ggplot2
+
+```
+## Day 3: Data manipulation & analysis
+### In-class worksheet
+
+**March 30th, 2024**
+
+## 1. Row/column addition (`mutate()`, `bind_rows()`, `left_join()`)
+
+The raw output from many types of high-throughput molecular biology experiments comes a unique sample ID (e.g., protein ID, gene ID) and that samples raw output response. (e.g., peptide abundance via mass spectrometry experiments, mRNA abundance via RNA-seq). Often we would like to accomplish the following:
+
+1. Add new columns that perform calculations on the raw data or contain "meta data" associated with that experiment (`mutate()`).
+
+2. Join multiple experiments into one data frame (`bind_rows()`).
+
+3. Import annotations to sample IDs with the hope of extracting broad trends about the behavior of biological systems in different contexts (`left_join()`).
+
+To demonstrate these concepts, we'll use real affinity purification mass spectrometry (APMS) data sets: `frog_dnai2` and `frog_heatr2`. 
+
+```{r message = FALSE}
+## import the dnai2 pull down data set
+frog_dnai2 <- read_csv("frog_apms_dnai2.csv")
+head(frog_dnai2)
+
+## import the heatr pull down data set
+frog_heatr2 <- read_csv("frog_apms_heatr2.csv")
+head(frog_heatr2)
+```
+
+
+### 1.1 Adding a new column
+
+For each APMS data frame, use `mutate()` to add a new column named `bait` that contains a string naming the bait used in that experiment. For instance, the `frog_dnai2` data frame should have a new column simply reading "dnai2" for each row in the new column. 
+
+The purpose of this is to prepare the data frames to be bound together; without this new column, we would not know observation belongs to which experiment once the data frames are combined.
+
+```{r}
+# your R code here
+```
+
+### 1.2 Binding two experiments together
+
+Now, using `bind_rows()` combine the two new data frames together.
+
+```{r}
+# your R code here
+```
+
+Another valid way to do this is with `rbind()`; the difference is that `rbind()` requires data frames with absolutely identifical column names to ensure a clean concatenation, whereas `bind_rows()` isn't so picky.
+
+**Bonus challenge:** Plot the distribution of z-scores (`PSM_zscore`) for your combined data frame. Color by experiment. Your choice of geom; see Section 3 of yesterday's worksheet for plotting distributions. Plot horizontal lines at the critical z-score value of 1.6, corresponding to a roughly 5% false positive rate (or p-value = 0.05) cutoff for a one-sided test (`geom_hline` or `geom_vline` will accomplish this).
+
+```{r}
+# your R code here
+```
+
+### 1.3 Joining an experiment table with an annotation table
+
+Now we have a data frame that contains protein interaction data for both dnai2 and heatr2, but the actual identifiers in the `ID` are not informative. To investigate the interacting biology, we need to join an annotation table to the APMS data frame. 
+
+```{r message = FALSE}
+
+# import the frog gene annotations
+frog_annotations <- read_csv("frog_enog_annotations.csv")
+head(frog_annotations)
+
+```
+
+Note that the annotation data frame has an `ID` column that matches the `ID` column in the APMS data frame. Also notice that the annotation data frame has 14292 rows, and our APMS data frame has 3356 rows. The `left_join()` function keeps all the rows from the data frame used as the "left" input, while joining in places that match the common column (`ID` in this case) to the right data frame. Use `left_join()` to combine the APMS data frame with the annotation data frame, such that the final data frame has 3356 rows and 12 columns.
+
+```{r}
+# your R code here
+```
+
+Now each observation is connected to a *X. laevis* gene name, in addition to the gene's human cousin. Not all genes have annotations, even though *X. laevis* is considered a model organism. This is common in bioinformatics.
+
+**Bonus challenge:** Plot a bar chart with `OG_category_annotation` on the x-axis. Color by bait. Flip the chart so long descriptions are more readable using the `coord_flip()` layer. Try `facet_wrap()`, does this improve clarity? Remove the y-axis label.
+
+```{r fig.width=6}
+# your R code here
+```
+
+## 2. Subsetting data (`filter()`, `select()`)
+
+In biological data analysis, we're often most interested in a specific subset of data--usually scores above some threshold (p-values, z-scores, fold changes in gene expression) or the behavior of a specific gene/protein family relative to time or different conditions..
+
+Perform the following operations to pare down the combined APMS data frame. Use the pipe (%>%) to chain data operations together and save the results to a new data frame in a single step:
+
+1. Filter the combined and annotated APMS data frame (generated in the previous step) to only contain observations with `PSM_zscore` > 1.6 (p ~ 0.05) to pull out proteins significantly interacting with dnai2 and heatr2 (use the `filter()` function).
+
+2. Then, in the same line of code, pipe (`%>%`) into `select()` to extract only the columns named `ID`, `bait`, `PSM_log2fc`, `PSM_zscore`, `OG_category_annotation`.
+
+3. Finally, again in the same line of code, pipe (`%>%`) into `arrange()` to re-sort the data frame to descend by `PSM_zscore` (i.e., highest z-scores should be at the top).
+
+```{r}
+# your R code here
+```
+
+Plot another bar plot, the same way we made the plot in Section 1.3; compare the distribution of functional categories for the most significant proteins versus the unfiltered data set depicted in Section 1.3. **Bonus challenge:** Reorder the bar plots so that the functional categories with the highest counts are grouped together using `fct_infreq()`.
+
+```{r fig.width=6}
+# your R code here
+```
+
+## 3. Aggregating data (`group_by()`, `summarize()`, `arrange()`)
+
+To find broad patterns in big data sets, we can use the `group_by()` and `summarize()` functions to get summary information for groups of variables. For instance, the `bait` column has two groups: dnai2 and heatr2. The `OG_category_annotations` column has 22 groups if you count the "NA" values resulting from unannotated genes. Use dataframe created in section #2 and the functions `select()` and `unique()` to look at the unique values (groups) in the columns `bait` and `OG_category_annotation` 
+
+```{r}
+# your R code here
+```
+
+When you `group_by()` a variable, you are collapsing all the information for the unique values associated with that variable. Then, we use `summarize()` to extract information associated with the collapsed information.
+
+We want to learn the functional categories for the proteins that are most signficantly measured to be interacting with both dnai2 and heatr2. To do this, use the dataframe created in section #2 and code the following steps (as a chain of functions connected by `%>%`):
+
+1. Use `group_by()` to group both the `bait` and `OG_category_annotation` columns
+2. Use `summarize()` to create a new column called `joint_zscore` that calculates a **weighted** z-score for all the proteins in each category. The equation for this is:
+    - `sum(PSM_zscore)/sqrt(length(PSM_zscore))` # sum of all z-scores divided by the number of observations per group
+3. Use `arrange()` to sort the data frame by `bait` and then by `joint_zscore` to get top hits.
+
+```{r}
+# your R code here
+```
+
+Using the summary data you just created, plot a bar chart for the functional categories, but this time put z-score on the y-axis instead of counts. Since you're specifying the `y = ` argument, you'll have to use `geom_col()` instead of `geom_bar()`.
+
+```{r fig.width=6}
+# your R code here
+```
+
+## 4. If that was easy...
+
+**Bonus challenge:** Take the sepal lengths from the `iris` data set and put them into a wide table so that is one data column per species. You might be tempted to do this with the following code, which however doesn't work. Can you figure out why? 
+
+```{r}
+# If you remove the # signs in the lines below you will get an error; this code doesn't work
+# iris %>% 
+#   select(Sepal.Length, Species) %>%
+#   pivot_wider(names_from = "Species", values_from = "Sepal.Length")
+```
+
+The problem is that `pivot_wider()` does not like to put data into the same row if it isn't sure that they actually belong together. In the iris table, there is no indication which "setosa" values, for example, should go with which "versicolor" values. Therefore, `pivot_wider()` prints a warning about values that are not uniquely identified.
+
+We can avoid this issue by adding a `row` column that is repeated among the three groups. This column simply counts rows within each group, from 1 to 50 in this particular data set. This trick forces the data from the same rows for different species into one row. (That means, rows 1 of setosa, versicolor, and virginica get combined, then rows 2, and so on.)
+
+```{r}
+# your R code here
+```
+
+(At the end, if you want, you can delete this column again:)
+
+```{r}
+# your R code here
+```
